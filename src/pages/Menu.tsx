@@ -1,19 +1,21 @@
 import { useState } from "react";
 import { menuItems } from "@/lib/menuData";
 import MenuItem from "@/components/MenuItem";
-import { FoodItem } from "@/types/food";
+import { FoodItem, RestaurantType } from "@/types/food";
 import { getCart, saveCart } from "@/lib/storage";
 import { useToast } from "@/hooks/use-toast";
-import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const Menu = () => {
-  const [filter, setFilter] = useState<"All" | "Veg" | "Non-Veg">("All");
+  const [typeFilter, setTypeFilter] = useState<"All" | "Veg" | "Non-Veg">("All");
+  const [restaurantFilter, setRestaurantFilter] = useState<RestaurantType | "All">("All");
   const { toast } = useToast();
 
-  const filteredItems = menuItems.filter(
-    (item) => filter === "All" || item.type === filter
-  );
+  const filteredItems = menuItems.filter((item) => {
+    const matchesType = typeFilter === "All" || item.type === typeFilter;
+    const matchesRestaurant = restaurantFilter === "All" || item.restaurant === restaurantFilter;
+    return matchesType && matchesRestaurant;
+  });
 
   const handleAddToCart = (item: FoodItem) => {
     const cart = getCart();
@@ -37,11 +39,27 @@ const Menu = () => {
       <div className="max-w-7xl mx-auto">
         <h1 className="text-4xl font-bold mb-2 animate-fade-in">🍴 Our Menu</h1>
         <p className="text-muted-foreground mb-8 animate-fade-in">
-          Explore our wide variety of delicious dishes
+          Explore dishes from various restaurants
         </p>
 
+        <div className="mb-6 animate-slide-up">
+          <h3 className="text-sm font-semibold mb-2">Restaurant Type</h3>
+          <Tabs value={restaurantFilter} onValueChange={(v) => setRestaurantFilter(v as typeof restaurantFilter)}>
+            <TabsList className="flex-wrap h-auto">
+              <TabsTrigger value="All">All</TabsTrigger>
+              <TabsTrigger value="Indian">Indian</TabsTrigger>
+              <TabsTrigger value="Chinese">Chinese</TabsTrigger>
+              <TabsTrigger value="Italian">Italian</TabsTrigger>
+              <TabsTrigger value="Fast Food">Fast Food</TabsTrigger>
+              <TabsTrigger value="Desserts">Desserts</TabsTrigger>
+              <TabsTrigger value="Beverages">Beverages</TabsTrigger>
+            </TabsList>
+          </Tabs>
+        </div>
+
         <div className="mb-8 animate-slide-up">
-          <Tabs value={filter} onValueChange={(v) => setFilter(v as typeof filter)}>
+          <h3 className="text-sm font-semibold mb-2">Food Type</h3>
+          <Tabs value={typeFilter} onValueChange={(v) => setTypeFilter(v as typeof typeFilter)}>
             <TabsList>
               <TabsTrigger value="All">All Items</TabsTrigger>
               <TabsTrigger value="Veg">Vegetarian</TabsTrigger>

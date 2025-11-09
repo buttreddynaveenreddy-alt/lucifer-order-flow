@@ -1,7 +1,10 @@
+export type RestaurantType = "Indian" | "Chinese" | "Italian" | "Fast Food" | "Desserts" | "Beverages";
+
 export interface FoodItem {
   id: number;
   name: string;
   type: "Veg" | "Non-Veg";
+  restaurant: RestaurantType;
   price: number;
   img: string;
   description?: string;
